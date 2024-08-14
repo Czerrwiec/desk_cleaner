@@ -18,10 +18,11 @@ ctk.set_appearance_mode('System')
 images = ['.jpg', '.png', '.gif']
 texts = ['.txt', '.odt', '.ods']
 
+dont_del = ["Dbgview.exe", "desktop.ini", "dot4CAD.ffs_gui", "generator", "ini_c", "katalog gółwny instalki.ffs_gui", "Licencja konta.txt", "MainFiles instalka.ffs_gui", "może się przydać", "aktualizator.new@aktualizator.cadprojekt.com.pl.lnk", "CAD Marketing.appref-ms", "Designer", "PodpisClientProject.exe", "Rozkrój - warsztat", "shutingdown_script.py", "Slack.lnk", "Total Commander 64 bit.lnk", "VS", "WinSCP.lnk"]
 
-with open(os.path.dirname(os.path.realpath(argv[0])) + '\\' + 'config.json') as file:
+
+with open(os.path.dirname(os.path.realpath(argv[0])) + '\\' + 'config.json', encoding='utf-8') as file:
     json_data = json.load(file)
-    print(json_data)
 
 
 class App(ctk.CTk):
@@ -39,10 +40,10 @@ class App(ctk.CTk):
         self.archives_list = []
 
 
-        self.sort_button = ctk.CTkButton(self, text="Sortuj pliki", font=("Noto Sans", 15), width=130, height=50)
+        self.sort_button = ctk.CTkButton(self, text="Sortuj pliki", font=("Noto Sans", 15), width=130, height=50, command=self.sort_files)
         self.sort_button.pack(pady=(20, 10), padx=(20, 20), side="top")
 
-        self.default_button = ctk.CTkButton(self, text="Przywróć pulpit", font=("Noto Sans", 15), width=130, height=50)
+        self.default_button = ctk.CTkButton(self, text="Przywróć pulpit", font=("Noto Sans", 15), width=130, height=50, command=self.make_default_desktop)
         self.default_button.pack(pady=(10, 20), padx=(20, 20), side="top")
 
 
@@ -52,12 +53,8 @@ class App(ctk.CTk):
         files = os.listdir(path)   
         for file in files:
             list_of_all.append(path + '\\' + file)
-
-            print(file)
-
         return list_of_all
-            # self.list_of_all_paths.append(path + '\\' + file)
-        
+                   
 
     def delete_shortcuts(self):
         shortcuts_to_delete = []
@@ -68,7 +65,6 @@ class App(ctk.CTk):
         for item in shortcuts_to_delete:
             os.remove(item)
             
-
 
     def categorize(self):
         self.list_of_all_paths = self.make_list_from_all(path)
@@ -91,13 +87,18 @@ class App(ctk.CTk):
 
             elif os.path.splitext(item)[1] in texts:
                 self.texts_list.append(item)
+ 
+    
 
-        # self.create_folder_and_move(self.pdf_list, 'pdf_files')
-        # self.create_folder_and_move(self.images_list, 'image_files')
-        # self.create_folder_and_move(self.texts_list, 'text_files')
-        # self.create_folder_and_move(self.video_list, 'video_files')
-        # self.create_folder_and_move(self.archives_list, 'archive_files')
-        
+    def sort_files(self):
+        self.categorize()
+        self.create_folder_and_move(self.pdf_list, 'pdf_files')
+        self.create_folder_and_move(self.images_list, 'image_files')
+        self.create_folder_and_move(self.texts_list, 'text_files')
+        self.create_folder_and_move(self.video_list, 'video_files')
+        self.create_folder_and_move(self.archives_list, 'archive_files')
+        self.delete_shortcuts()
+
 
 
     def create_folder_and_move(self, files_list, folder_name):
@@ -110,13 +111,9 @@ class App(ctk.CTk):
             for item in files_list:
                 shutil.move(item, folder)
 
-
-
-       
-        # self.delete_shortcuts()
-        
-
-        
+    def make_default_desktop(self):
+        for a in dont_del:
+            print(a)
 
 
  
